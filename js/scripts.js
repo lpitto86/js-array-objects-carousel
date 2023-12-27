@@ -1,87 +1,79 @@
-const images = ['img/01.webp', 'img/02.webp', 'img/03.webp', 'img/04.webp', 'img/05.webp'];
-
-// Elemento del carosello
-const carousel = document.getElementById('carousel');
-
-// Ciclo per le immagini
-for (let i = 0; i < images.length; i++) {
-    // Creazione di un elemento div
-    const item = document.createElement('div');
-    item.className = 'carousel-item';
-
-    // Creazione di un elemento img
-    const img = document.createElement('img');
-    img.className = 'carousel-img';
-    img.src = images[i];
-    img.alt = `Image ${i + 1}`;
-
-    // Immagine al div
-    item.appendChild(img);
-
-    // Div al carosello
-    carousel.appendChild(item);
-}
-
-// Ottieni la lista
-const items = document.querySelectorAll('.carousel-item');
-
-// Mostra solo la prima immagine
-items[0].classList.add('visible');
-
-function showImage(index) {
-    // Rimuovi la classe 'visible' dagli elementi
-    items.forEach(item => item.classList.remove('visible'));
+const slides = [
+      {
+          image: 'img/01.webp',
+          title: 'Image 1',
+          text: 'Description for Image 1'
+      },
+      {
+          image: 'img/02.webp',
+          title: 'Image 2',
+          text: 'Description for Image 2'
+      },
+      {
+          image: 'img/03.webp',
+          title: 'Image 3',
+          text: 'Description for Image 3'
+      },
+      {
+          image: 'img/04.webp',
+          title: 'Image 4',
+          text: 'Description for Image 4'
+      },
+      {
+          image: 'img/05.webp',
+          title: 'Image 5',
+          text: 'Description for Image 5'
+      }
+  ];
   
-    // Aggiungi la classe 'visible' all'elemento
-    items[index].classList.add('visible');
+  const carousel = document.getElementById('carousel');
+  const carouselInner = document.querySelector('.carousel-inner');
+  const titleElement = document.getElementById('slideTitle');
+  const textElement = document.getElementById('slideText');
   
-    // Immagine successiva
-    const nextIndex = (index + 1) % items.length;
+  function createCarousel() {
+      for (let i = 0; i < slides.length; i++) {
+          const item = document.createElement('div');
+          item.className = i === 0 ? 'carousel-item active' : 'carousel-item';
   
-    // Controlla se l'immagine successiva è la prima
-    if (nextIndex === 0) {
-      // Tempo per l'immagine
-      setTimeout(() => {
-        showImage(0);
-      }, 2000);
-    }
-}
+          const img = document.createElement('img');
+          img.className = 'carousel-img';
+          img.src = slides[i].image;
+          img.alt = slides[i].title;
   
-// Click sulla freccia sinistra
-document.getElementById('prevBtn').addEventListener('click', function () {
-    // Immagine attualmente visibile
-    const currentIndex = Array.from(items).findIndex(item => item.classList.contains('visible'));
-
-    // Immagine precedente
-    const previousIndex = (currentIndex - 1 + items.length) % items.length;
-
-    // Mostra immagine precedente
-    showImage(previousIndex);
+          item.appendChild(img);
+          carouselInner.appendChild(item);
+      }
+  }
+  
+  function showSlide(index) {
+      const items = document.querySelectorAll('.carousel-item');
+      items.forEach(item => item.classList.remove('visible'));
+      items[index].classList.add('visible');
+  
+      titleElement.textContent = slides[index].title;
+      textElement.textContent = slides[index].text;
+  
+      const nextIndex = (index + 1) % items.length;
+  
+      if (nextIndex === 0) {
+          setTimeout(() => {
+              showSlide(0);
+          }, 2000);
+      }
+  }
+  
+  document.getElementById('prevBtn').addEventListener('click', function () {
+      const currentIndex = Array.from(document.querySelectorAll('.carousel-item')).findIndex(item => item.classList.contains('visible'));
+      const previousIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(previousIndex);
   });
   
-// Click sulla freccia destra
-document.getElementById('nextBtn').addEventListener('click', function () {
-    // Immagine attualmente visibile
-    const currentIndex = Array.from(items).findIndex(item => item.classList.contains('visible'));
-
-    // Immagine successiva
-    const nextIndex = (currentIndex + 1) % items.length;
-
-    // Immagine successiva
-    showImage(nextIndex);
-});
-
-// Funzione per passare automaticamente all'immagine
-function autoPlay() {
-    // Immagine attualmente visibile
-    const currentIndex = Array.from(items).findIndex(item => item.classList.contains('visible'));
+  document.getElementById('nextBtn').addEventListener('click', function () {
+      const currentIndex = Array.from(document.querySelectorAll('.carousel-item')).findIndex(item => item.classList.contains('visible'));
+      const nextIndex = (currentIndex + 1) % slides.length;
+      showSlide(nextIndex);
+  });
   
-    // Immagine successiva
-    const nextIndex = (currentIndex + 1) % items.length;
-  
-    // Immagine successiva
-    showImage(nextIndex);
-  }
-
-// Imposta un timer per chiamare la funzione autoPlay ogni 3000 millisecondi (3 secondi)
-const autoplayInterval = setInterval(autoPlay, 3000);
+  createCarousel();
+  showSlide(0);
